@@ -56,3 +56,7 @@ The default output root is `experiments/`; you can override it with the script's
 - `forg_tag.out` and `forg_taw.out`: per-task forgetting matrices.
 
 Each experiment directory also contains `stdout-YYYY-MM-DD-HH-MM.txt`, which records the training progress and evaluation output shown in the terminal.
+
+## Acknowledgements
+
+This project is based on [Elastic Feature Consolidation (EFC)](https://github.com/simomagi/elastic_feature_consolidation). We thank the authors for making their code publicly available.
