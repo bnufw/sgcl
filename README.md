@@ -34,18 +34,7 @@ DATA_ROOT/
 bash run_experiments.sh /path/to/DATA_ROOT
 ```
 
-The script runs the following six experiments sequentially, using seed 0 and GPU 0 by default.
-
-| Dataset | Tasks | Classes in the First Task | Epochs (First/Subsequent Tasks) | `(λs, λp)` |
-| --- | ---: | ---: | --- | --- |
-| CIFAR-100 | 10 | 10 | 100/100 | (5, 0.03) |
-| CIFAR-100 | 20 | 5 | 100/100 | (5, 0.03) |
-| Tiny-ImageNet | 10 | 20 | 100/100 | (10, 0.03) |
-| Tiny-ImageNet | 20 | 10 | 100/100 | (10, 0.03) |
-| ImageNet-Subset | 10 | 10 | 160/100 | (20, 0.1) |
-| ImageNet-Subset | 20 | 5 | 160/100 | (20, 0.1) |
-
-All experiments use ResNet-18 with a training batch size of 64. Classifier calibration runs for 30 epochs with a batch size of 256 and an SGD learning rate of `1e-3`.
+The script runs the following six experiments sequentially.
 
 If the datasets are stored separately, set `CIFAR_DATA_PATH`, `TINY_DATA_PATH`, and `IMAGENET_DATA_PATH` to the parent directories of their respective dataset directories. You can also set `PYTHON`, `DEVICE`, `NW`, and `SEED` through environment variables. Add `--dry-run` to print the commands without executing them.
 
