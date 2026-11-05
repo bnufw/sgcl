@@ -1,0 +1,69 @@
+ 
+from .resnet18 import resnet18
+from .resnet18_imagenet import resnet18_imagenet
+from torch import nn
+
+         
+class BaseModel(nn.Module):
+    def __init__(self, backbone,dataset):
+        super(BaseModel, self).__init__()
+        self.backbone_type = backbone
+        self.dataset = dataset
+ 
+        if self.backbone_type == "resnet18" :
+            if dataset == "cifar100":
+                self.backbone = resnet18(avg_pool_size=4)
+            elif dataset == "tiny-imagenet":
+                self.backbone = resnet18(avg_pool_size=8)
+            elif dataset == "imagenet-subset":
+                self.backbone = resnet18_imagenet()
+
+        else:
+            raise ValueError("Unsupported backbone: {}".format(backbone))
+
+        self.heads = nn.ModuleList()
+    
+    def get_feat_size(self):
+        return self.backbone.feature_space_size
+
+    def add_classification_head(self, n_out):
+      
+        self.heads.append(
+            nn.Sequential(nn.Linear(self.backbone.feature_space_size, n_out, bias=False)))
+
+    
+    def forward(self, x):
+        results = {}
+        features = self.backbone(x)
+ 
+        for id, head in enumerate(self.heads):
+            results[id] = head(features)
+        
+        return results, features
+    
+    
+    def freeze_all(self):
+        """Freeze all parameters from the model, including the heads"""
+        for param in self.parameters():
+            param.requires_grad = False
+    
+
+    def freeze_backbone(self):
+        """Freeze all parameters from the main model, but not the heads"""
+        for param in self.backbone.parameters():
+            param.requires_grad = False
+            
+    def unfreeze_backbone(self):
+        """Unfreeze all parameters from the main model, but not the heads"""
+        for param in self.backbone.parameters():
+            param.requires_grad = True 
+    
+ 
+    def freeze_bn(self):
+        """Freeze all Batch Normalization layers from the model and use them in eval() mode"""
+        for m in self.backbone.modules():
+            if isinstance(m, nn.BatchNorm2d):
+                m.eval()
+                for param in m.parameters(): 
+                    param.requires_grad=False
+               
